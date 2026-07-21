@@ -1,0 +1,9 @@
+{
+  "name": "lecharge-core",
+  "displayName": "LeCharge Core",
+  "version": "0.1.0",
+  "description": "Orientation and brand rules for all LeCharge skills. Install this first.",
+  "author": { "name": "LumaSystems" },
+  "homepage": "https://lecharge.co",
+  "keywords": ["lecharge", "orientation", "brand"]
+}

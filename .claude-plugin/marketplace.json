@@ -1,0 +1,11 @@
+{
+  "name": "lecharge",
+  "displayName": "LeCharge",
+  "description": "On-brand proposal and landing tools for the LeCharge commercial team.",
+  "owner": { "name": "LumaSystems", "url": "https://lecharge.co" },
+  "plugins": [
+    { "name": "lecharge-core", "source": "plugins/lecharge-core" },
+    { "name": "lecharge-proposals", "source": "plugins/lecharge-proposals" },
+    { "name": "lecharge-landing", "source": "plugins/lecharge-landing" }
+  ]
+}
