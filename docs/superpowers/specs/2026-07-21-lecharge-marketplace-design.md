@@ -58,8 +58,11 @@ lecharge-marketplace/
 │   └── check-sync.mjs            # fails if any plugin's vendored copy is stale
 ├── plugins/
 │   ├── lecharge-core/
-│   │   ├── .claude-plugin/plugin.json
-│   │   └── skills/using-lecharge/SKILL.md
+│   │   ├── .claude-plugin/plugin.json    # declares the Linear MCP server
+│   │   ├── .mcp.json                     # https://mcp.linear.app/mcp (Streamable HTTP)
+│   │   └── skills/
+│   │       ├── using-lecharge/SKILL.md
+│   │       └── tracking/SKILL.md          # track Linear issues / what is next
 │   ├── lecharge-proposals/
 │   │   ├── .claude-plugin/plugin.json
 │   │   ├── bin/render-pdf         # headless-Chrome HTML->PDF
@@ -98,10 +101,26 @@ this first. Responsibilities:
 - State the non-negotiable brand rules once (tokens, Spanish, no em dashes, accent, SF
   Pro, live reference) so downstream skills inherit them.
 - Route intent to the right skill: proposal work to `lecharge-proposals:proposal-generator`;
-  landing/blog/section/site edits to `lecharge-landing:landing-editor`.
+  landing/blog/section/site edits to `lecharge-landing:landing-editor`; issue tracking /
+  "what is next" to the `tracking` skill (below).
 - Explain the single-source design model.
 
 No asset bundle required beyond the brand-rules text; it is orientation and routing.
+
+### Plugin: `lecharge-core` — skill `tracking` + Linear MCP
+
+`lecharge-core` bundles the **official Linear MCP server** so the commercial team can
+track their work from inside Cowork. `plugin.json` references `.mcp.json`, which declares
+the Streamable-HTTP endpoint `https://mcp.linear.app/mcp` (full read + write). Auth is
+**OAuth per user** on first connect (browser sign-in); the plugin stores no credentials,
+and each rep's actions are scoped to their own Linear permissions.
+
+The **`tracking`** skill orients non-technical reps, in Spanish, on how to use the Linear
+tools the MCP exposes: see what is assigned to me, what is next / by priority, the status
+of an issue, and how to log a follow-up (create an issue) or move a card. It does not
+wrap the tools in code; it teaches when and how to call them and enforces Spanish output.
+
+Access decision: **full read + write** (endpoint `.../mcp`, not the `/readonly` variant).
 
 ### Plugin: `lecharge-proposals` — skill `proposal-generator`
 
@@ -199,3 +218,4 @@ headless-Chrome PDF, Spanish, hand-typed data.
 - Plugins reference — https://code.claude.com/docs/en/plugins-reference
 - Agent Skills — https://code.claude.com/docs/en/agent-sdk/skills
 - Install plugins in Cowork — https://claude.com/docs/cowork/guide/plugins
+- Linear MCP server — https://linear.app/docs/mcp

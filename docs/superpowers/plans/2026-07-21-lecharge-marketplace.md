@@ -690,6 +690,8 @@ and vendored into each plugin's `assets/`. Each skill reads the copy in its own
   use `lecharge-proposals:proposal-generator`.
 - The user wants to **edit the landing site**: a new blog post, a new landing section,
   a copy change on lecharge.co: use `lecharge-landing:landing-editor`.
+- The user wants to **track work**: what is assigned to me, what is next, issue status,
+  logging a follow-up in Linear: use `lecharge-core:tracking`.
 
 If the intent is ambiguous, ask one clarifying question, then route.
 
@@ -1082,7 +1084,143 @@ git commit -m "feat: add lecharge-landing plugin for safe on-brand PR edits"
 
 ---
 
-### Task 7: Full integration — manifests, sync check, and top-level test run
+### Task 7: `lecharge-core` Linear tracking skill + bundled MCP server
+
+**Files:**
+- Create: `plugins/lecharge-core/.mcp.json`
+- Modify: `plugins/lecharge-core/.claude-plugin/plugin.json`
+- Create: `plugins/lecharge-core/skills/tracking/SKILL.md`
+- Test: `scripts/test/linear.test.mjs`
+
+**Interfaces:**
+- Consumes: the `lecharge-core` plugin from Task 4.
+- Produces: a bundled Linear MCP server (full read + write) and a `tracking` skill that
+  routes from `using-lecharge`.
+
+- [ ] **Step 1: Write the failing test**
+
+`scripts/test/linear.test.mjs`:
+
+```js
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+const read = (p) => readFile(path.join(root, p), 'utf8');
+
+test('lecharge-core .mcp.json declares the Linear Streamable-HTTP server', async () => {
+  const mcp = JSON.parse(await read('plugins/lecharge-core/.mcp.json'));
+  const linear = mcp.mcpServers?.linear;
+  assert.ok(linear, 'missing mcpServers.linear');
+  assert.equal(linear.type, 'http');
+  assert.equal(linear.url, 'https://mcp.linear.app/mcp');
+});
+
+test('plugin.json points mcpServers at .mcp.json', async () => {
+  const manifest = JSON.parse(await read('plugins/lecharge-core/.claude-plugin/plugin.json'));
+  assert.equal(manifest.mcpServers, './.mcp.json');
+});
+
+test('tracking SKILL.md has required frontmatter and no em dash', async () => {
+  const md = await read('plugins/lecharge-core/skills/tracking/SKILL.md');
+  assert.match(md, /^---[\s\S]*\bname:\s*tracking\b/m);
+  assert.match(md, /\bdescription:/);
+  assert.equal(md.includes('—'), false, 'em dash found in tracking SKILL.md');
+});
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run: `node --test scripts/test/linear.test.mjs`
+Expected: FAIL — cannot read `plugins/lecharge-core/.mcp.json`.
+
+- [ ] **Step 3: Write `plugins/lecharge-core/.mcp.json`**
+
+```json
+{
+  "mcpServers": {
+    "linear": {
+      "type": "http",
+      "url": "https://mcp.linear.app/mcp"
+    }
+  }
+}
+```
+
+- [ ] **Step 4: Point `plugin.json` at the MCP config**
+
+Modify `plugins/lecharge-core/.claude-plugin/plugin.json`: add the `mcpServers` key so it reads:
+
+```json
+{
+  "name": "lecharge-core",
+  "displayName": "LeCharge Core",
+  "version": "0.1.0",
+  "description": "Orientation, brand rules, and issue tracking for all LeCharge skills. Install this first.",
+  "author": { "name": "LumaSystems" },
+  "homepage": "https://lecharge.co",
+  "keywords": ["lecharge", "orientation", "brand", "linear"],
+  "mcpServers": "./.mcp.json"
+}
+```
+
+- [ ] **Step 5: Write `plugins/lecharge-core/skills/tracking/SKILL.md`**
+
+```markdown
+---
+name: tracking
+description: Use when the user wants to track their work in Linear: what is assigned to me, what is next by priority, the status of an issue, or logging a follow-up (creating or updating an issue). Uses the bundled Linear MCP tools.
+allowed-tools:
+  - Read
+---
+
+# LeCharge work tracking (Linear)
+
+The `lecharge-core` plugin connects Linear through its MCP server. The Linear tools
+appear automatically once the plugin is enabled. The first time, Linear opens a browser
+to sign in (OAuth); after that it is remembered. Everything a rep can see or change is
+scoped to their own Linear permissions.
+
+Follow the LeCharge brand rules from `using-lecharge`: answer in Spanish, never use an
+em dash.
+
+## What you can help with
+
+- "Que tengo asignado?": list issues assigned to the current user.
+- "Que sigue?": list open issues by priority / next up, for the user or their team.
+- "Estado de <issue>": look up an issue and summarize status, assignee, priority.
+- "Registra un seguimiento": create a new issue (title, description, team, optional
+  assignee and priority), confirming the details in Spanish before creating.
+- "Marca como listo" / status change: update an issue's state, after confirming.
+
+## How to behave
+
+1. Prefer the Linear MCP tools for anything about issues; do not guess issue data.
+2. For any change (create, update, comment, state change), restate what you are about
+   to do in Spanish and get a yes before calling the write tool.
+3. Summarize results as a short Spanish list: issue name, status, priority, who owns it.
+4. If Linear is not connected yet, tell the user to enable the plugin and complete the
+   Linear sign-in, then retry.
+```
+
+- [ ] **Step 6: Run tests to verify they pass**
+
+Run: `node --test scripts/test/linear.test.mjs`
+Expected: PASS (3 tests).
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add plugins/lecharge-core scripts/test/linear.test.mjs
+git commit -m "feat: bundle Linear MCP and add tracking skill in lecharge-core"
+```
+
+---
+
+### Task 8: Full integration — manifests, sync check, and top-level test run
 
 **Files:**
 - Create: `scripts/test/nodash.test.mjs`
@@ -1148,7 +1286,7 @@ Replace the `## Status` and `## Next step` sections of `README.md` with:
 ## Structure
 
 - `packages/lecharge-ui/` single source of the design system (tokens, components, print, sprite, block catalog).
-- `plugins/lecharge-core/` orientation plugin (`using-lecharge`). Install first.
+- `plugins/lecharge-core/` orientation (`using-lecharge`) plus Linear issue tracking (`tracking` + bundled Linear MCP). Install first.
 - `plugins/lecharge-proposals/` proposal generator (conversation to HTML to PDF).
 - `plugins/lecharge-landing/` on-brand landing edits via pull requests.
 - `.claude-plugin/marketplace.json` lists the plugins so Cowork can install them from this repo.
@@ -1181,13 +1319,14 @@ git commit -m "test: repo-wide integration and no-em-dash guard; document market
 - `packages/lecharge-ui` single source (tokens/components/print/sprite/COMPONENTS) → Tasks 1, 3. ✓
 - Sync + drift check → Task 2. ✓
 - `lecharge-core` / `using-lecharge` → Task 4. ✓
+- `lecharge-core` Linear MCP (full read+write) + `tracking` skill, OAuth per user → Task 7. ✓
 - `lecharge-proposals` conversational generator, HTML then PDF via headless Chrome, HTML fallback → Task 5. ✓
 - Static/print adaptation of components → Task 1 (`print.css`), Task 3 (blocks wrapped `proposal-page`). ✓
 - `lecharge-landing` safe PR editor, assumes CI, templates, setup note → Task 6. ✓
-- Brand rules enforced (Spanish, no em dash, tokens) → `using-lecharge` (Task 4) + `nodash.test.mjs` (Task 7). ✓
+- Brand rules enforced (Spanish, no em dash, tokens) → `using-lecharge` (Task 4) + `nodash.test.mjs` (Task 8). ✓
 - Independent versioning via per-plugin `plugin.json` → Tasks 4, 5, 6. ✓
 - Dependency on `lecharge-core` → Tasks 5, 6 manifests. ✓
-- Testing strategy (sync unit, e2e render, manifest validity) → Tasks 2, 3, 5, 7. ✓
+- Testing strategy (sync unit, e2e render, manifest validity, MCP config) → Tasks 2, 3, 5, 7, 8. ✓
 - Out-of-scope items (visual builder, CRM feed, bilingual, landing consuming lecharge-ui, building CI) correctly omitted. ✓
 
 **Placeholder scan:** No "TBD"/"handle edge cases"/vague steps. `{{...}}` tokens in HTML templates are intentional fill-in markers documented by their surrounding skill, not plan placeholders.
