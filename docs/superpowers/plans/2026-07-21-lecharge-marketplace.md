@@ -640,7 +640,7 @@ Expected: FAIL — cannot read `.claude-plugin/marketplace.json`.
 }
 ```
 
-Note: Tasks 5 and 7 create the `lecharge-proposals` and `lecharge-landing` directories these entries point at. The `manifests.test.mjs` `exists` check for those two will fail until then; run the full manifest test only after Task 7. For this task, verify just the core entry (Step 6).
+Note: Tasks 5 and 6 create the `lecharge-proposals` and `lecharge-landing` directories these entries point at. The `manifests.test.mjs` `exists` check for those two will fail until then; run the full manifest test only after Task 6. For this task, verify just the core entry (Step 6).
 
 - [ ] **Step 4: Write `plugins/lecharge-core/.claude-plugin/plugin.json`**
 
