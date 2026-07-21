@@ -28,3 +28,9 @@ pnpm-debug.log*
 # Orca worktrees
 .orca/
 .worktrees/
+
+# plugin dependencies (installed on demand)
+plugins/**/node_modules/
+# scratch PDF/HTML render outputs
+*.local.html
+*.local.pdf

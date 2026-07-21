@@ -1,0 +1,36 @@
+/* ============================================================
+   LeCharge design tokens
+   Extracted from the landing page (LumaSystems/landing).
+   Single source of these values for proposals + marketplace blocks.
+   Aesthetic: Apple-discipline, near-monochrome + one green accent.
+   ============================================================ */
+
+:root {
+  /* surfaces */
+  --bg:        #ffffff;
+  --bg-alt:    #f5f5f7;
+  --bg-dark:   #0b0c0e;
+
+  /* ink scale */
+  --ink:       #1d1d1f;
+  --ink-2:     #6e6e73;
+  --ink-3:     #86868b;
+  --dim:       #d2d2d7;
+  --hair:      rgba(0,0,0,.10);
+
+  /* the single accent (green) */
+  --accent:      #00a15c;
+  --accent-2:    #12b06a;
+  --accent-deep: #007a45;
+  --accent-tint: rgba(0,161,92,.10);
+
+  /* geometry + motion */
+  --radius:  20px;
+  --ease:    cubic-bezier(.22,.61,.36,1);
+  --ease-io: cubic-bezier(.28,.11,.32,1);
+  --maxw:    1080px;
+
+  /* type: real SF Pro on Apple devices via the system stack */
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+          "Helvetica Neue", Inter, system-ui, sans-serif;
+}

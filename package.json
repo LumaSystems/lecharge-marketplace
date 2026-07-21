@@ -1,0 +1,12 @@
+{
+  "name": "lecharge-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "LeCharge Cowork plugin marketplace and design-system source.",
+  "scripts": {
+    "sync": "node scripts/sync-design.mjs",
+    "check-sync": "node scripts/check-sync.mjs",
+    "test": "node --test scripts/test/"
+  }
+}
