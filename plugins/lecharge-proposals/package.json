@@ -1,0 +1,10 @@
+{
+  "name": "lecharge-proposals-render",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Headless-Chrome HTML-to-PDF renderer for LeCharge proposals.",
+  "bin": { "render-pdf": "bin/render-pdf.mjs" },
+  "scripts": { "test": "node --test test/" },
+  "dependencies": { "puppeteer": "^23.0.0" }
+}

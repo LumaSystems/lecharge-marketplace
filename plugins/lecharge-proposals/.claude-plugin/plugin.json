@@ -1,0 +1,10 @@
+{
+  "name": "lecharge-proposals",
+  "displayName": "LeCharge Proposals",
+  "version": "0.1.0",
+  "description": "Generate on-brand LeCharge client proposals through a Spanish conversation, output HTML and PDF.",
+  "author": { "name": "LumaSystems" },
+  "homepage": "https://lecharge.co",
+  "keywords": ["lecharge", "proposals", "pdf"],
+  "dependencies": [{ "name": "lecharge-core" }]
+}
