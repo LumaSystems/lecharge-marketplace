@@ -6,7 +6,15 @@ const root = path.resolve(here, '..');
 
 export const SOURCE_DIR = path.join(root, 'packages', 'lecharge-ui');
 
-export const FILES = ['tokens.css', 'components.css', 'print.css', 'sprite.svg', 'COMPONENTS.md'];
+export const FILES = [
+  'tokens.css',
+  'components.css',
+  'print.css',
+  'sprite.svg',
+  'COMPONENTS.md',
+  'brand/logo.svg',
+  'brand/logo-white.svg',
+];
 
 export const TARGET_DIRS = [
   path.join(root, 'plugins', 'lecharge-proposals', 'skills', 'proposal-generator', 'assets'),

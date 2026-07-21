@@ -52,6 +52,11 @@ lecharge-marketplace/
 │       ├── components.css        # buttons, bands, cards, chart, flow, etc.
 │       ├── print.css             # A4/Letter page, margins, page-breaks, motion off
 │       ├── sprite.svg            # inline icon <symbol> set
+│       ├── brand/                # logo assets (vectorized from the provided raster)
+│       │   ├── logo.svg          # primary lockup, navy wordmark (light backgrounds)
+│       │   ├── logo-white.svg    # white wordmark (dark backgrounds)
+│       │   ├── logo.png          # transparent raster fallback (not vendored)
+│       │   └── logo-white.png    # transparent raster fallback (not vendored)
 │       └── COMPONENTS.md         # block catalog: what each block is + its markup
 ├── scripts/
 │   ├── sync-design.mjs           # vendors packages/lecharge-ui/* into each plugin
@@ -87,9 +92,17 @@ skill reads its own bundled CSS, satisfying Cowork's isolation), while there is 
 Long-term, the landing repo can also consume `packages/lecharge-ui` so the live site is
 single-sourced too (out of scope for v1).
 
-`lecharge-ui` is extracted from the existing `design/landing-reference.css`, adapted so
-the component set has **static/print** variants (no scroll-scrub, no count-up, motion
-off) suitable for proposals and PDF, while preserving the visual language.
+`lecharge-ui` is extracted from the existing `design/landing-reference.css` (verified
+byte-identical to the live `LumaSystems/landing` `public/styles.css`), adapted so the
+component set has **static/print** variants (no scroll-scrub, no count-up, motion off)
+suitable for proposals and PDF, while preserving the visual language.
+
+Brand: the LeCharge logo was vectorized to SVG (`brand/logo.svg` primary, `brand/logo-white.svg`
+for dark backgrounds) so it stays crisp at any size and renders sharply through the
+HTML-to-PDF pipeline. Only the SVGs are vendored into plugins; transparent PNGs are kept
+in the source as a raster fallback. The design token `--accent` stays `#00a15c` for UI
+accents; the logo keeps its own brighter mint green as a fixed asset (they are allowed to
+differ). A true vector master can replace the traced SVG later with no rework.
 
 ## Components
 

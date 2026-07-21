@@ -13,7 +13,9 @@ export async function syncDesign() {
     for (const f of FILES) {
       const src = path.join(SOURCE_DIR, f);
       if (!(await exists(src))) continue; // source not authored yet
-      await writeFile(path.join(dir, f), await readFile(src));
+      const dst = path.join(dir, f);
+      await mkdir(path.dirname(dst), { recursive: true }); // handles nested paths like brand/
+      await writeFile(dst, await readFile(src));
       copied++;
     }
   }

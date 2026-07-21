@@ -402,10 +402,13 @@ Every proposal HTML document has this shell (assets are siblings in this folder)
 ## Blocks
 
 ### portada
-Cover. Client name, sector, date, LeCharge brand mark.
+Cover. LeCharge logo, client name, sector, date. The logo is the vendored brand SVG
+(`brand/logo.svg`, a sibling of the stylesheets in `assets/`); use `brand/logo-white.svg`
+only on a dark background.
 ```html
 <section class="proposal-page hero">
   <div class="wrap">
+    <img class="brand-logo" src="brand/logo.svg" alt="LeCharge" style="height:46px;margin:0 auto 22px;display:block">
     <div class="eyebrow"><span class="dot"></span> Propuesta comercial</div>
     <h1 class="hero-title">Electromovilidad para <span class="g">{{cliente}}</span></h1>
     <p class="sub">{{sector}} · {{fecha}}</p>
