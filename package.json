@@ -7,6 +7,6 @@
   "scripts": {
     "sync": "node scripts/sync-design.mjs",
     "check-sync": "node scripts/check-sync.mjs",
-    "test": "node --test scripts/test/"
+    "test": "node --test \"scripts/test/*.test.mjs\""
   }
 }
