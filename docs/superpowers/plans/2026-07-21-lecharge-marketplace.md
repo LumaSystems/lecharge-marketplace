@@ -677,7 +677,7 @@ on-brand and consistent across skills. Read this before acting.
 These apply to every LeCharge skill and every piece of output:
 
 1. **Language: Spanish.** All client-facing and site copy is Spanish.
-2. **Never use em dashes ("—").** Use commas, colons, or parentheses instead. This is a hard rule.
+2. **Never use em dashes.** Use commas, colons, or parentheses instead. This is a hard rule.
 3. **Design system, exactly.** Near-monochrome with one green accent `#00a15c`
    (`--accent`), SF Pro type, generous whitespace. Use the design tokens verbatim;
    do not invent colors, fonts, or spacing.
