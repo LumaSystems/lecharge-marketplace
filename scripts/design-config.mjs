@@ -8,8 +8,9 @@ export const SOURCE_DIR = path.join(root, 'packages', 'lecharge-ui');
 
 export const FILES = [
   'tokens.css',
-  'components.css',
-  'print.css',
+  'components.css',      // landing component library (used by lecharge-landing)
+  'proposal-doc.css',    // vertical A4 proposal chassis
+  'proposal-deck.css',   // landscape 16:9 proposal chassis
   'sprite.svg',
   'COMPONENTS.md',
   'brand/logo.svg',

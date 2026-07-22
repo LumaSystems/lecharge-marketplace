@@ -1,0 +1,133 @@
+/* ============================================================
+   LeCharge proposal, LANDSCAPE deck (16:9 -> PDF via Chrome).
+   Layer AFTER tokens.css. Each .slide is one 13.333in x 7.5in
+   landscape page. Apple-clean: white canvas, one green accent,
+   SF Pro display + SF Mono labels. Matches the LeCharge hero.
+   ============================================================ */
+:root {
+  --faint:     #a1a1a6;
+  --hair-soft: rgba(0,0,0,.055);
+  --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, monospace;
+}
+
+@page { size: 338.67mm 190.5mm; margin: 0; }   /* 13.333in x 7.5in, 16:9 */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  font-family: var(--font); color: var(--ink); font-size: 13pt; line-height: 1.5;
+  letter-spacing: -.01em; -webkit-font-smoothing: antialiased; counter-reset: sl;
+}
+h1,h2,h3,h4 { font-weight: 800; letter-spacing: -.025em; line-height: 1.08; }
+b,strong { font-weight: 600; color: var(--ink); }
+p { color: var(--ink-2); }
+
+/* ---------- one landscape slide per page ---------- */
+.slide {
+  position: relative; width: 338.67mm; height: 190.5mm; overflow: hidden;
+  page-break-after: always; break-after: page;
+  padding: 19mm 22mm 17mm; display: flex; flex-direction: column; background: #fff;
+}
+.slide:last-of-type { page-break-after: auto; break-after: auto; }
+
+/* ---------- slide header ---------- */
+.s-head { margin-bottom: 7mm; }
+.s-kicker { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .16em; font-size: 9.5pt; font-weight: 600; color: var(--accent-deep); }
+.s-title { font-size: 29pt; margin-top: 4mm; max-width: 24ch; }
+.s-title.sm { font-size: 24pt; max-width: 30ch; }
+.s-lead { font-size: 13.5pt; color: var(--ink-2); margin-top: 5mm; max-width: 70ch; line-height: 1.45; }
+
+/* body region fills the remaining height */
+.s-body { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+.s-body.top { justify-content: flex-start; }
+
+/* ---------- footer (brand lockup + page counter) ---------- */
+.s-foot { position: absolute; left: 22mm; right: 22mm; bottom: 9mm; display: flex; align-items: center; justify-content: space-between; font-size: 9pt; color: var(--faint); border-top: 1px solid var(--hair-soft); padding-top: 4mm; }
+.s-foot .b { display: flex; align-items: center; gap: 8px; }
+.s-foot .b img { height: 15px; width: auto; }
+.s-foot .b .sub { font-family: var(--font-mono); font-weight: 500; font-size: 7.5pt; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.s-foot .pg { font-family: var(--font-mono); letter-spacing: .12em; }
+.s-foot .pg::before { counter-increment: sl; content: counter(sl, decimal-leading-zero); }
+
+/* ---------- cover slide ---------- */
+.slide.cover { justify-content: center; padding: 0 30mm; }
+.cover .glow { position: absolute; top: -8%; left: 50%; transform: translateX(-50%); width: 1000px; max-width: 120%; height: 640px; filter: blur(16px); z-index: 0; pointer-events: none; background: radial-gradient(closest-side, var(--accent-tint), transparent 70%); }
+.cover-inner { position: relative; z-index: 1; }
+.cover .lock { display: flex; align-items: center; gap: 11px; margin-bottom: 12mm; }
+.cover .lock img { height: 30px; width: auto; }
+.cover .lock .div { width: 1px; height: 20px; background: var(--hair); }
+.cover .lock .kind { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .16em; font-size: 8pt; font-weight: 500; color: var(--ink-3); }
+.cover .eyebrow { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .2em; font-size: 9.5pt; font-weight: 600; color: var(--accent-deep); margin-bottom: 6mm; }
+.cover h1 { font-size: 44pt; letter-spacing: -.035em; line-height: 1.02; max-width: 22ch; }
+.cover h1 .g { color: var(--accent); }
+.cover .sub { font-size: 15pt; color: var(--ink-2); font-weight: 400; margin-top: 7mm; max-width: 66ch; line-height: 1.45; }
+.cover .meta { display: grid; grid-template-columns: repeat(4,auto); margin-top: 13mm; border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; width: fit-content; }
+.cover .meta .cell { padding: 11px 22px 12px; border-right: 1px solid var(--hair); }
+.cover .meta .cell:last-child { border-right: 0; }
+.cover .meta .lbl { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .13em; font-size: 7pt; color: var(--faint); }
+.cover .meta .val { font-weight: 600; color: var(--ink); margin-top: 4px; font-size: 10.5pt; }
+
+/* ---------- statement slide (big centered line) ---------- */
+.slide.statement { justify-content: center; }
+.statement .big { font-weight: 800; font-size: 37pt; letter-spacing: -.03em; line-height: 1.1; max-width: 26ch; }
+.statement .big .g { color: var(--accent); }
+.statement .sub { font-size: 14pt; color: var(--ink-2); margin-top: 7mm; max-width: 60ch; line-height: 1.45; }
+
+/* ---------- card grids ---------- */
+.grid { display: grid; gap: 6mm; }
+.grid.g2 { grid-template-columns: 1fr 1fr; }
+.grid.g3 { grid-template-columns: repeat(3,1fr); }
+.grid.g4 { grid-template-columns: repeat(4,1fr); }
+.scard { border: 1px solid var(--hair); border-radius: 14px; padding: 6mm 6.5mm; background: #fff; display: flex; flex-direction: column; }
+.scard .n { font-family: var(--font-mono); font-size: 9.5pt; color: var(--accent-deep); font-weight: 600; }
+.scard h4 { font-size: 13.5pt; margin-top: 2mm; }
+.scard p { font-size: 10.6pt; color: var(--ink-3); margin-top: 2.5mm; line-height: 1.42; }
+.scard.key { border-color: #a9ddc6; background: var(--accent-tint); }
+
+/* ---------- big stat row ---------- */
+.sstats { display: grid; grid-template-columns: repeat(4,1fr); gap: 8mm; }
+.sstat .num { font-weight: 800; font-size: 34pt; letter-spacing: -.03em; color: var(--accent); }
+.sstat .cap { font-size: 11pt; color: var(--ink-3); margin-top: 2mm; line-height: 1.35; }
+
+/* ---------- horizontal step flow (numbered) ---------- */
+.flow { display: grid; grid-template-columns: repeat(4,1fr); align-items: stretch; }
+.fstep { position: relative; padding: 0 5mm; }
+.fstep + .fstep { border-left: 1px solid var(--hair-soft); }
+.fstep .ix { width: 30px; height: 30px; border-radius: 9px; background: var(--accent); color: #fff; font-family: var(--font-mono); font-weight: 600; font-size: 12pt; display: flex; align-items: center; justify-content: center; }
+.fstep h4 { font-size: 12.5pt; margin-top: 4mm; }
+.fstep p { font-size: 10.4pt; color: var(--ink-3); margin-top: 2.5mm; line-height: 1.42; }
+
+/* ---------- callout ---------- */
+.scallout { background: var(--accent-tint); border: 1px solid var(--hair-soft); border-left: 3px solid var(--accent); border-radius: 11px; padding: 6mm 7mm; }
+.scallout h4 { font-size: 12.5pt; }
+.scallout p { font-size: 11pt; color: var(--ink-2); margin-top: 3px; line-height: 1.45; }
+
+/* ---------- table ---------- */
+table.stbl { width: 100%; border-collapse: collapse; font-size: 11.5pt; }
+.stbl thead th { background: var(--ink); color: #fff; text-align: left; padding: 8px 16px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .06em; font-size: 8.5pt; font-weight: 600; }
+.stbl thead th.num { text-align: right; }
+.stbl td { padding: 8px 16px; border-bottom: 1px solid var(--hair); color: var(--ink-2); vertical-align: middle; }
+.stbl td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stbl td.svc { font-weight: 600; color: var(--ink); }
+.stbl tr.total td { background: var(--accent-tint); font-weight: 700; color: var(--ink); border-bottom: 0; font-size: 12.5pt; }
+
+/* ---------- gantt (months) ---------- */
+.gantt { margin-top: 6mm; }
+.gantt .head { display: grid; grid-template-columns: 210px repeat(var(--cols,3),1fr); font-family: var(--font-mono); font-size: 8.5pt; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; }
+.gantt .head span { padding: 0 0 5px 6px; border-left: 1px solid var(--hair-soft); }
+.gantt .head .lh { border-left: 0; }
+.gantt .row { display: grid; grid-template-columns: 210px repeat(var(--cols,3),1fr); align-items: center; padding: 5px 0; }
+.gantt .row .rl { font-size: 11pt; color: var(--ink); padding-right: 12px; font-weight: 500; }
+.gantt .cells { grid-column: 2 / -1; position: relative; height: 30px; display: grid; grid-template-columns: repeat(var(--cols,3),1fr); }
+.gantt .cells .c { border-left: 1px solid var(--hair-soft); }
+.gantt .bar { position: absolute; top: 3px; height: 24px; border-radius: 7px; background: var(--accent); border: 1px solid var(--accent); display: flex; align-items: center; padding: 0 13px; font-size: 9.5pt; color: #fff; font-weight: 600; white-space: nowrap; }
+
+/* ---------- two-column prose ---------- */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 9mm; }
+.two h4 { font-size: 12.5pt; margin-bottom: 3mm; }
+.two p { font-size: 11pt; color: var(--ink-3); line-height: 1.5; }
+
+/* ---------- end / contact strip ---------- */
+.endrow { display: grid; grid-template-columns: repeat(3,1fr); gap: 14mm; margin-top: 8mm; border-top: 1px solid var(--hair); padding-top: 7mm; }
+.endrow .lbl { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .11em; font-size: 8pt; color: var(--faint); margin-bottom: 4px; }
+.endrow b { color: var(--ink); font-size: 12pt; }
+.endrow p { font-size: 11pt; color: var(--ink-2); }

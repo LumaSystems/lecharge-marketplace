@@ -49,8 +49,9 @@ lecharge-marketplace/
 ├── packages/
 │   └── lecharge-ui/              # THE single source of truth (authored once)
 │       ├── tokens.css            # palette, type, radius, easing (canonical)
-│       ├── components.css        # buttons, bands, cards, chart, flow, etc.
-│       ├── print.css             # A4/Letter page, margins, page-breaks, motion off
+│       ├── components.css        # landing component library (used by lecharge-landing)
+│       ├── proposal-doc.css      # vertical A4 proposal chassis
+│       ├── proposal-deck.css     # landscape 16:9 proposal chassis
 │       ├── sprite.svg            # inline icon <symbol> set
 │       ├── brand/                # logo assets (vectorized from the provided raster)
 │       │   ├── logo.svg          # primary lockup, navy wordmark (light backgrounds)
@@ -137,28 +138,38 @@ Access decision: **full read + write** (endpoint `.../mcp`, not the `/readonly` 
 
 ### Plugin: `lecharge-proposals` — skill `proposal-generator`
 
-Data flow: **conversation → data object → HTML → PDF → delivered files.**
+Data flow: **choose format → conversation → HTML → PDF → delivered files.**
 
-1. **Intake (Spanish, one topic at a time):** cliente (nombre, sector, contacto, logo
-   opcional), objetivo, solucion/producto elegido, especificaciones tecnicas (kW,
-   conectores, numero de cargadores), terminos comerciales y precios, cifras de retorno
-   (ROI), cronograma de despliegue, condiciones.
-2. **Composition:** a proposal is an ordered set of section blocks selected from the
-   catalog in `COMPONENTS.md`, each a static/print adaptation of a landing component:
-   portada/cover, resumen ejecutivo, solucion y especificaciones, grafico de ROI
-   (`bars2` with static values), tabla de precios, cronograma (`flow` stepper),
-   segmentos/casos de uso, cita/testimonio, condiciones, contacto/CTA.
-3. **Render HTML:** assemble one self-contained HTML file linking the vendored
-   `tokens.css` + `components.css` + `print.css`, with client data injected. HTML is a
-   first-class deliverable (clean structure, reusable).
-4. **HTML to PDF:** `bin/render-pdf` (Puppeteer / headless Chrome) renders a print-clean
-   PDF with `printBackground: true` so gradients, the green accent, and SF Pro survive.
-   Page size A4 (Letter configurable), respecting `print.css` page-breaks.
-5. **Deliver:** save both the `.html` and the final `.pdf` to the rep's files.
+The proposal is a real premium document, not a web page (design bar set by the Kairos
+`proposals/` references). Two dedicated print chassis carry the LeCharge language
+(near-monochrome, one green accent, SF Pro, SF Mono for kickers):
 
-Interface: the skill's contract is "collect these fields in Spanish, emit HTML + PDF."
-It depends on its vendored `assets/` and `bin/render-pdf`. It can be understood and
-tested without reading the other plugins.
+- `proposal-doc.css`: a **vertical A4 document** (dark cover card with the white logo,
+  hairline metadata grid, mono kickers, numbered sections, green stat rows, dark-header
+  pricing tables, roadmap cards, native page footer).
+- `proposal-deck.css`: a **landscape 16:9 deck** (white Apple-clean slides, cover with the
+  green glow lockup, big stat row, card grids, return table, gantt, contact close, page
+  counter footer).
+
+Steps:
+1. **Ask the format first:** documento vertical (A4) or presentacion horizontal (16:9).
+   This picks the chassis and block set.
+2. **Intake (Spanish, one topic at a time):** cliente (nombre, sector, contacto), objetivo,
+   solucion, especificaciones tecnicas (kW, conectores, numero de cargadores), precios,
+   cifras de retorno (ROI), cronograma, condiciones, proximos pasos.
+3. **Composition:** an ordered set of blocks from the format's section of `COMPONENTS.md`.
+4. **Render HTML:** assemble one HTML linking `tokens.css` + the chosen chassis. The
+   document sets `<meta name="lc-footer">`; the deck uses its in-canvas slide footer.
+5. **HTML to PDF:** `bin/render-pdf` (Puppeteer) uses `preferCSSPageSize` so each chassis
+   owns its page geometry, `printBackground: true`, and adds the native footer for documents.
+6. **Verify pagination:** the skill reviews the rendered pages and confirms no block is cut
+   across a page or slide, no orphaned heading, no footer overlap; it redistributes content
+   and re-renders until clean. The chassis also enforce this in CSS (`break-inside: avoid`
+   on every atomic block in the document; fixed-size slides in the deck).
+7. **Deliver:** save both the `.html` and the final `.pdf`.
+
+Interface: the skill's contract is "pick a format, collect these fields in Spanish, emit a
+clean HTML + PDF." It depends on its vendored `assets/` and `bin/render-pdf`.
 
 ### Plugin: `lecharge-landing` — skill `landing-editor`
 
