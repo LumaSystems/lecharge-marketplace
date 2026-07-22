@@ -75,10 +75,10 @@ mkdir -p "$RENDER_HOME"
 [ -d "$RENDER_HOME/node_modules/puppeteer" ] || ( cd "$RENDER_HOME" && npm init -y >/dev/null && npm install puppeteer )
 ```
 
-Then render (the renderer lives in this plugin, referenced via `${CLAUDE_PLUGIN_ROOT}`):
+Then render (the renderer sits next to this skill, referenced via `${CLAUDE_PLUGIN_ROOT}`):
 
 ```bash
-LECHARGE_RENDER_HOME="$RENDER_HOME" node "${CLAUDE_PLUGIN_ROOT}/bin/render-pdf.mjs" <input.html> <output.pdf>
+LECHARGE_RENDER_HOME="$RENDER_HOME" node "${CLAUDE_PLUGIN_ROOT}/skills/proposal-generator/render-pdf.mjs" <input.html> <output.pdf>
 ```
 
 The renderer respects each chassis page size (A4 or 16:9) and adds the native footer for

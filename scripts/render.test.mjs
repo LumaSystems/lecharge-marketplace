@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const run = promisify(execFile);
 const here = path.dirname(fileURLToPath(import.meta.url));
-const bin = path.join(here, '..', 'bin', 'render-pdf.mjs');
+const bin = path.join(here, '..', 'plugins', 'lecharge-proposals', 'skills', 'proposal-generator', 'render-pdf.mjs');
 
 // Puppeteer is not bundled with the plugin; it installs on demand into a render
 // cache. Mirror that here: ensure a cache home has puppeteer, then point the

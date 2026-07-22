@@ -160,7 +160,7 @@ Steps:
 3. **Composition:** an ordered set of blocks from the format's section of `COMPONENTS.md`.
 4. **Render HTML:** assemble one HTML linking `tokens.css` + the chosen chassis. The
    document sets `<meta name="lc-footer">`; the deck uses its in-canvas slide footer.
-5. **HTML to PDF:** `bin/render-pdf` (Puppeteer) uses `preferCSSPageSize` so each chassis
+5. **HTML to PDF:** the skill's `render-pdf.mjs` (Puppeteer) uses `preferCSSPageSize` so each chassis
    owns its page geometry, `printBackground: true`, and adds the native footer for documents.
    The plugin ships **no** `package.json`: Puppeteer is installed on demand into a cache
    folder (`~/.cache/lecharge-render`) and located via `LECHARGE_RENDER_HOME`, so the plugin
