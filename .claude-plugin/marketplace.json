@@ -1,11 +1,24 @@
 {
   "name": "lecharge",
-  "displayName": "LeCharge",
-  "description": "On-brand proposal and landing tools for the LeCharge commercial team.",
-  "owner": { "name": "LumaSystems", "url": "https://lecharge.co" },
+  "owner": { "name": "LumaSystems" },
+  "metadata": {
+    "description": "On-brand proposal and landing tools for the LeCharge commercial team."
+  },
   "plugins": [
-    { "name": "lecharge-core", "source": "plugins/lecharge-core" },
-    { "name": "lecharge-proposals", "source": "plugins/lecharge-proposals" },
-    { "name": "lecharge-landing", "source": "plugins/lecharge-landing" }
+    {
+      "name": "lecharge-core",
+      "source": "./plugins/lecharge-core",
+      "description": "Orientation, brand rules, and Linear issue tracking. Install first."
+    },
+    {
+      "name": "lecharge-proposals",
+      "source": "./plugins/lecharge-proposals",
+      "description": "Generate on-brand client proposals as a vertical document or landscape deck, HTML and PDF."
+    },
+    {
+      "name": "lecharge-landing",
+      "source": "./plugins/lecharge-landing",
+      "description": "Make on-brand edits to the LeCharge landing site via safe pull requests."
+    }
   ]
 }
