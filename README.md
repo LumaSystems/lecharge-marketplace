@@ -3,29 +3,35 @@
 A marketplace of plugins/templates that let the LeCharge commercial team generate
 on-brand client **proposals** using the LeCharge design system.
 
-## Status
+## Structure
 
-Greenfield. This repo is seeded with:
-
-- `MARKETPLACE-PLAN.md` — first-pass orientation: reusable design primitives, 2-3
-  architecture directions (recommendation: data-driven templates + generator that
-  grows into a visual builder), and open questions to resolve before building.
-- `design/tokens.css` — the LeCharge design tokens (palette, type, radius, easing),
-  extracted from the landing page.
-- `design/landing-reference.css` — full copy of the landing page's stylesheet, for
-  component reference (buttons, cards, charts, charger illustration, etc.).
+- `packages/lecharge-ui/` single source of the design system: `tokens.css`, `components.css`
+  (landing library), `proposal-doc.css` (vertical A4 chassis), `proposal-deck.css` (landscape
+  16:9 chassis), `sprite.svg`, `brand/` (logo SVGs), and `COMPONENTS.md` (block catalog for
+  both proposal formats).
+- `plugins/lecharge-core/` orientation (`using-lecharge`) plus Linear issue tracking
+  (`tracking` and a bundled Linear MCP server). Install this first.
+- `plugins/lecharge-proposals/` proposal generator: asks whether the client wants a vertical
+  document or a landscape deck, then walks a conversation from content to HTML to PDF via
+  headless Chrome.
+- `plugins/lecharge-landing/` on-brand landing page edits delivered via pull requests.
+- `.claude-plugin/marketplace.json` lists the plugins so Cowork can install them from this repo.
 
 ## Design system source
 
-The design system currently lives in the LeCharge landing repo (`LumaSystems/landing`,
-`public/styles.css` + `public/index.html`). Live site: https://lecharge.co
-Aesthetic: Apple-discipline — near-monochrome with one green accent (`#00a15c`),
-SF Pro, generous whitespace. Copy is Spanish. **No em dashes ("—") in any copy.**
+The design system was extracted from the LeCharge landing repo (`LumaSystems/landing`,
+`public/styles.css` + `public/index.html`) into `packages/lecharge-ui/`, so the landing
+site and proposals stay single-sourced. Live site: https://lecharge.co
+Aesthetic: Apple-discipline, near-monochrome with one green accent (`#00a15c`),
+SF Pro, generous whitespace. Copy is Spanish. **No em dashes in any copy.**
 
-Part of the plan is deciding whether to extract a shared `lecharge-ui` package so the
-landing site and proposals stay single-sourced.
+## Using it in Cowork
 
-## Next step
+Add this git repo as a plugin marketplace in Cowork, then install `lecharge-core` plus
+whichever capability you need.
 
-Brainstorm direction with the team (see the open questions in `MARKETPLACE-PLAN.md`),
-then scaffold the chosen architecture.
+## Maintaining the design system
+
+Edit files only in `packages/lecharge-ui/`, then run `npm run sync` to vendor them into
+every plugin. `npm run check-sync` fails if any plugin copy is stale. `npm test` runs the
+full suite (sync, catalog, manifests, no-em-dash guard).
