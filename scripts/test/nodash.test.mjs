@@ -16,7 +16,9 @@ async function* walk(dir) {
 }
 
 test('no em dash in any authored content file', async () => {
-  const exts = new Set(['.md', '.html', '.css', '.json']);
+  // scoped to plugins/ + packages/ only, so test files (which legitimately contain the
+  // character in their assertions) are never scanned
+  const exts = new Set(['.md', '.html', '.css', '.json', '.svg', '.mjs']);
   const offenders = [];
   for await (const f of walk(path.join(root, 'plugins'))) {
     if (!exts.has(path.extname(f))) continue;

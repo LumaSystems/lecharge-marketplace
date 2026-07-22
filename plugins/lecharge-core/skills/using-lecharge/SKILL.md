@@ -21,7 +21,8 @@ These apply to every LeCharge skill and every piece of output:
 
 The design system is single-sourced in `packages/lecharge-ui` in the marketplace repo
 and vendored into each plugin's `assets/`. Each skill reads the copy in its own
-`assets/` folder (`tokens.css`, `components.css`, `print.css`, `sprite.svg`, `COMPONENTS.md`).
+`assets/` folder (`tokens.css`, `components.css`, the proposal chassis `proposal-doc.css`
+and `proposal-deck.css`, `sprite.svg`, `brand/` logos, and `COMPONENTS.md`).
 
 ## Routing: pick the right skill
 

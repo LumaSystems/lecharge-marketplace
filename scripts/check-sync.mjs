@@ -14,8 +14,9 @@ export async function checkSync() {
       if (!(await exists(src))) continue;
       const dst = path.join(dir, f);
       if (!(await exists(dst))) { mismatches.push(`missing: ${dst}`); continue; }
-      const [a, b] = [await readFile(src, 'utf8'), await readFile(dst, 'utf8')];
-      if (a !== b) mismatches.push(`stale: ${dst}`);
+      // byte-compare so binary assets (e.g. a future PNG) never round-trip lossily
+      const [a, b] = [await readFile(src), await readFile(dst)];
+      if (!a.equals(b)) mismatches.push(`stale: ${dst}`);
     }
   }
   return { ok: mismatches.length === 0, mismatches };
