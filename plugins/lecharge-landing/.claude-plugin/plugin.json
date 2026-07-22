@@ -1,0 +1,10 @@
+{
+  "name": "lecharge-landing",
+  "displayName": "LeCharge Landing",
+  "version": "0.1.0",
+  "description": "Make on-brand edits to the LeCharge landing site (blogs, sections, copy) via safe pull requests.",
+  "author": { "name": "LumaSystems" },
+  "homepage": "https://lecharge.co",
+  "keywords": ["lecharge", "landing", "blog", "content"],
+  "dependencies": [{ "name": "lecharge-core" }]
+}
