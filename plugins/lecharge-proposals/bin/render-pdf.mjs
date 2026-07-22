@@ -2,6 +2,9 @@
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 import { access } from 'node:fs/promises';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 
 const [input, output] = process.argv.slice(2);
 if (!input || !output) {
@@ -14,11 +17,28 @@ const escapeHtml = (s) => s.replace(/[&<>"]/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]
 ));
 
-let puppeteer;
-try {
-  puppeteer = (await import('puppeteer')).default;
-} catch {
-  console.error('puppeteer is not installed. Run `npm install` in the plugin directory, then retry.');
+// Puppeteer is NOT bundled with the plugin (that would make the plugin an npm
+// package with a heavy Chromium dependency). It is installed on demand into a
+// cache folder; the skill sets LECHARGE_RENDER_HOME to that folder. We also fall
+// back to a normally-resolvable puppeteer for local development.
+function loadPuppeteer() {
+  const home = process.env.LECHARGE_RENDER_HOME;
+  const candidates = [];
+  if (home) candidates.push(path.join(home, 'node_modules', 'puppeteer'));
+  candidates.push('puppeteer');
+  for (const c of candidates) {
+    try { const m = require(c); return m.default || m; } catch { /* try next */ }
+  }
+  return null;
+}
+
+const puppeteer = loadPuppeteer();
+if (!puppeteer) {
+  console.error('puppeteer is not available. Install it once into your render cache:');
+  console.error('  RENDER_HOME="$HOME/.cache/lecharge-render"; mkdir -p "$RENDER_HOME"');
+  console.error('  (cd "$RENDER_HOME" && npm init -y >/dev/null && npm install puppeteer)');
+  console.error('then re-run with LECHARGE_RENDER_HOME="$RENDER_HOME".');
+  console.error('The HTML is still valid and can be printed to PDF from a browser as a fallback.');
   process.exit(3);
 }
 

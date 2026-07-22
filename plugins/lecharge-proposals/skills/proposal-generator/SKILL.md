@@ -65,14 +65,26 @@ folder) so the `assets/...` relative links resolve.
 
 ## Step 4: Render the PDF
 
-If the renderer dependencies are not installed yet, run once: `npm install` in the plugin
-root (the folder with `package.json`).
+The renderer uses headless Chrome through Puppeteer, installed on demand into a cache
+folder so the plugin itself stays lightweight (no bundled dependencies). Set it up once,
+then reuse it for every proposal:
 
-Then run: `node bin/render-pdf.mjs <input.html> <output.pdf>`
+```bash
+RENDER_HOME="$HOME/.cache/lecharge-render"
+mkdir -p "$RENDER_HOME"
+[ -d "$RENDER_HOME/node_modules/puppeteer" ] || ( cd "$RENDER_HOME" && npm init -y >/dev/null && npm install puppeteer )
+```
+
+Then render (the renderer lives in this plugin, referenced via `${CLAUDE_PLUGIN_ROOT}`):
+
+```bash
+LECHARGE_RENDER_HOME="$RENDER_HOME" node "${CLAUDE_PLUGIN_ROOT}/bin/render-pdf.mjs" <input.html> <output.pdf>
+```
 
 The renderer respects each chassis page size (A4 or 16:9) and adds the native footer for
-documents. If it exits non-zero (headless Chrome unavailable), tell the user the HTML is
-ready and they can open it and use the browser "Guardar como PDF". Do not fail silently.
+documents. If it exits non-zero (Puppeteer or Chrome unavailable in this environment),
+tell the user the HTML is ready and they can open it and use the browser "Guardar como
+PDF". Do not fail silently.
 
 ## Step 5: Verify the pagination (catch layout errors)
 

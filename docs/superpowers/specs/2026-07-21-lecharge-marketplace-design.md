@@ -162,6 +162,10 @@ Steps:
    document sets `<meta name="lc-footer">`; the deck uses its in-canvas slide footer.
 5. **HTML to PDF:** `bin/render-pdf` (Puppeteer) uses `preferCSSPageSize` so each chassis
    owns its page geometry, `printBackground: true`, and adds the native footer for documents.
+   The plugin ships **no** `package.json`: Puppeteer is installed on demand into a cache
+   folder (`~/.cache/lecharge-render`) and located via `LECHARGE_RENDER_HOME`, so the plugin
+   stays a plain, lightweight bundle (Cowork does not surface a plugin that ships an npm
+   package with a heavy Chromium dependency).
 6. **Verify pagination:** the skill reviews the rendered pages and confirms no block is cut
    across a page or slide, no orphaned heading, no footer overlap; it redistributes content
    and re-renders until clean. The chassis also enforce this in CSS (`break-inside: avoid`
