@@ -2,6 +2,7 @@
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 import { access } from 'node:fs/promises';
+import { existsSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
@@ -32,6 +33,35 @@ function loadPuppeteer() {
   return null;
 }
 
+// Many sandboxes (Cowork included) block Puppeteer's Chrome download but ship a
+// preinstalled browser (e.g. /opt/pw-browsers/chromium...). Find it so the render
+// works without downloading Chrome. Honor PUPPETEER_EXECUTABLE_PATH first.
+function findChrome() {
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) return process.env.PUPPETEER_EXECUTABLE_PATH;
+  const roots = [process.env.PLAYWRIGHT_BROWSERS_PATH, '/opt/pw-browsers', '/opt/playwright-browsers'].filter(Boolean);
+  const names = new Set(['chrome', 'chromium', 'headless_shell', 'chrome-headless-shell']);
+  const walk = (dir, depth) => {
+    if (depth < 0) return null;
+    let entries;
+    try { entries = readdirSync(dir); } catch { return null; }
+    for (const e of entries) {
+      const full = path.join(dir, e);
+      let st;
+      try { st = statSync(full); } catch { continue; }
+      if (st.isDirectory()) { const hit = walk(full, depth - 1); if (hit) return hit; }
+      else if (names.has(e) && (st.mode & 0o111)) return full;
+    }
+    return null;
+  };
+  for (const r of roots) { const hit = walk(r, 5); if (hit) return hit; }
+  const common = [
+    '/usr/bin/chromium', '/usr/bin/chromium-browser', '/usr/bin/google-chrome', '/usr/bin/google-chrome-stable',
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/Applications/Chromium.app/Contents/MacOS/Chromium',
+  ];
+  return common.find((p) => { try { return existsSync(p); } catch { return false; } }) || undefined;
+}
+
 const puppeteer = loadPuppeteer();
 if (!puppeteer) {
   console.error('puppeteer is not available. Install it once into your render cache:');
@@ -44,7 +74,12 @@ if (!puppeteer) {
 
 let browser;
 try {
-  browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+  const executablePath = findChrome();
+  browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    ...(executablePath ? { executablePath } : {}),
+  });
   const page = await browser.newPage();
   const url = pathToFileURL(path.resolve(input)).href;
   await page.goto(url, { waitUntil: 'networkidle0' });

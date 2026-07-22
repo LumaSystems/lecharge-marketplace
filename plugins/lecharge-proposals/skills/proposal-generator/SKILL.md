@@ -72,7 +72,9 @@ then reuse it for every proposal:
 ```bash
 RENDER_HOME="$HOME/.cache/lecharge-render"
 mkdir -p "$RENDER_HOME"
-[ -d "$RENDER_HOME/node_modules/puppeteer" ] || ( cd "$RENDER_HOME" && npm init -y >/dev/null && npm install puppeteer )
+# Cowork blocks Puppeteer's Chrome download but ships a preinstalled Chromium, so install
+# WITHOUT downloading Chrome. The renderer finds the preinstalled browser automatically.
+[ -d "$RENDER_HOME/node_modules/puppeteer" ] || ( cd "$RENDER_HOME" && npm init -y >/dev/null && PUPPETEER_SKIP_DOWNLOAD=1 npm install puppeteer )
 ```
 
 Then render (the renderer sits next to this skill, referenced via `${CLAUDE_PLUGIN_ROOT}`):
@@ -81,10 +83,13 @@ Then render (the renderer sits next to this skill, referenced via `${CLAUDE_PLUG
 LECHARGE_RENDER_HOME="$RENDER_HOME" node "${CLAUDE_PLUGIN_ROOT}/skills/proposal-generator/render-pdf.mjs" <input.html> <output.pdf>
 ```
 
-The renderer respects each chassis page size (A4 or 16:9) and adds the native footer for
-documents. If it exits non-zero (Puppeteer or Chrome unavailable in this environment),
-tell the user the HTML is ready and they can open it and use the browser "Guardar como
-PDF". Do not fail silently.
+The renderer respects each chassis page size (A4 or 16:9), adds the native footer for
+documents, and auto-detects a preinstalled browser (it checks `PUPPETEER_EXECUTABLE_PATH`
+and locations like `/opt/pw-browsers`). If it reports no browser was found (a plain machine
+with no Chrome), install Puppeteer's own Chromium instead and retry:
+`( cd "$RENDER_HOME" && npm install puppeteer )`. If rendering still fails, tell the user
+the HTML is ready and they can open it and use the browser "Guardar como PDF". Do not fail
+silently.
 
 ## Step 5: Verify the pagination (catch layout errors)
 
